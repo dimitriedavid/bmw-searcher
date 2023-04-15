@@ -40,4 +40,8 @@ def main():
     print(f"Found {new_cars} new cars")
 
 if __name__ == '__main__':
-    main()
+    # run every 5 minutes
+    while True:
+        print("Running... time is {}".format(time.ctime()))
+        main()
+        time.sleep(5 * 60)
