@@ -52,7 +52,7 @@ def parse_product_div(product, tree):
 
     return car
 
-def scrape():
+def get_driver():
     options = webdriver.ChromeOptions()
     options.add_argument("start-maximized");
     options.add_argument('--ignore-ssl-errors=yes')
@@ -62,6 +62,11 @@ def scrape():
     command_executor='http://localhost:4444/wd/hub',
     options=options
     )
+
+    return driver
+
+def scrape():
+    driver = get_driver()
 
     cars = []
 
@@ -95,7 +100,28 @@ def scrape():
         print("Error")
         print(e)
     finally:
-        print("Closing driver")
         driver.quit()
 
         return cars
+
+def get_features(url):
+    driver = get_driver()
+
+    features = []
+
+    try:
+        driver.get(url)
+
+        # get html and load it in lxml
+        html = driver.page_source
+        tree = etree.HTML(html)
+
+        equipment = tree.xpath("//div[@class='equipment']//span/text()")
+
+        features = equipment
+    except Exception as e:
+        print("Error")
+        print(e)
+    finally:
+        driver.quit()
+        return features

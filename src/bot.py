@@ -1,5 +1,6 @@
 import telebot
 from car import Car
+import time
 
 class TelegramBot:
     def __init__(self, token, mock=False):
@@ -18,6 +19,7 @@ class TelegramBot:
 
     def send_car(self, car: Car):
         if self.mock:
-            print("Sending car: {}".format(car))
+            print("Sending car: {}".format(car.get_text_message()))
         else:
-            self.bot.send_photo(self.chat_id, car.avatar, caption=car.get_text_message(), parse_mode="HTML")
+            self.bot.send_photo(self.chat_id, car.avatar)
+            self.bot.send_message(self.chat_id, car.get_text_message(), parse_mode="HTML")
