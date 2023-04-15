@@ -4,8 +4,7 @@ import pymongo
 from bmw_de_scraper import scrape, get_features
 from car import get_car_from_dict
 import time
-
-last_daily = 0
+from datetime import datetime
 
 def main():
     # init telegram bot
@@ -53,9 +52,12 @@ def main():
     sold_cars = 0
     # check if any car was sold
     for car in collection.find():
-        if not any(c.product_code == car["product_code"] for c in cars):
+        if not any(c.product_code == car["product_code"] for c in cars) and car["sold"] is None:
             # send message
             tgmBot.send_car_sold(get_car_from_dict(car))
+
+            # mark car as sold with timestamp
+            collection.update_one({"product_code": car["product_code"]}, {"$set": {"sold": datetime.now().strftime("%d.%m.%Y %H:%M:%S")}})
 
             sold_cars += 1
 
@@ -64,10 +66,17 @@ def main():
     print(f"Found {price_changes} price changes")
 
     # send daily update
-    global last_daily
+    daily_collection = client["m340i"]["daily"]
+    last_daily = daily_collection.find_one({"name": "last_daily"})
+    # if no last_daily entry exists, create one
+    if last_daily is None:
+        daily_collection.insert_one({"name": "last_daily", "value": 0})
+        last_daily = 0
+    else:
+        last_daily = last_daily["value"]
     if time.time() - last_daily > 24 * 60 * 60:
-        last_daily = time.time()
-        tgmBot.send_daily(new_cars, sold_cars, price_changes)
+        daily_collection.update_one({"name": "last_daily"}, {"$set": {"value": time.time()}})
+        tgmBot.send_daily(new_cars, sold_cars, price_changes, len(cars))
 
 if __name__ == '__main__':
     # run every 5 minutes
