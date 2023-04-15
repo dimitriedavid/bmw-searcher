@@ -37,3 +37,9 @@ class TelegramBot:
         else:
             self.bot.send_photo(self.chat_id, car.avatar)
             self.bot.send_message(self.chat_id, f"💰💰Price change💰💰\n<b>Old price: {old_price}</b>\n\n{car.get_text_message()}", parse_mode="HTML")
+
+    def send_daily(self, new_cars, sold_cars, price_changes):
+        if self.mock:
+            print("Daily update: {}".format(f"Found {new_cars} new cars\nFound {sold_cars} sold cars\nFound {price_changes} price changes"))
+        else:
+            self.bot.send_message(self.chat_id, f"Daily update:\nFound {new_cars} new cars\nFound {sold_cars} sold cars\nFound {price_changes} price changes")

@@ -5,6 +5,8 @@ from bmw_de_scraper import scrape, get_features
 from car import get_car_from_dict
 import time
 
+last_daily = 0
+
 def main():
     # init telegram bot
     tgmBot = TelegramBot(telegram_token, mock=False)
@@ -60,6 +62,12 @@ def main():
     print(f"Found {new_cars} new cars")
     print(f"Found {sold_cars} sold cars")
     print(f"Found {price_changes} price changes")
+
+    # send daily update
+    global last_daily
+    if time.time() - last_daily > 24 * 60 * 60:
+        last_daily = time.time()
+        tgmBot.send_daily(new_cars, sold_cars, price_changes)
 
 if __name__ == '__main__':
     # run every 5 minutes
