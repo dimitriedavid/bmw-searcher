@@ -22,6 +22,7 @@ def main():
     print(f"Found {len(cars)} cars")
 
     new_cars = 0
+    price_changes = 0
     for car in cars:
         # check if car is already in db
         if collection.count_documents({"product_code": car.product_code}) == 0:
@@ -36,8 +37,29 @@ def main():
 
             new_cars += 1
             time.sleep(5)
+        else:
+            # check if price changed
+            old_car = collection.find_one({"product_code": car.product_code})
+            if old_car["price"] != car.price:
+                # send message
+                tgmBot.send_price_change(car, old_car["price"])
+
+                # update car in db
+                collection.update_one({"product_code": car.product_code}, {"$set": car.get_dict()})
+                price_changes += 1
+
+    sold_cars = 0
+    # check if any car was sold
+    for car in collection.find():
+        if not any(c.product_code == car["product_code"] for c in cars):
+            # send message
+            tgmBot.send_car_sold(get_car_from_dict(car))
+
+            sold_cars += 1
 
     print(f"Found {new_cars} new cars")
+    print(f"Found {sold_cars} sold cars")
+    print(f"Found {price_changes} price changes")
 
 if __name__ == '__main__':
     # run every 5 minutes

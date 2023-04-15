@@ -23,3 +23,17 @@ class TelegramBot:
         else:
             self.bot.send_photo(self.chat_id, car.avatar)
             self.bot.send_message(self.chat_id, car.get_text_message(), parse_mode="HTML")
+
+    def send_car_sold(self, car: Car):
+        if self.mock:
+            print("Sending car sold: {}".format(car.get_text_message()))
+        else:
+            self.bot.send_photo(self.chat_id, car.avatar)
+            self.bot.send_message(self.chat_id, "⛔⛔Car sold⛔⛔\n{}⛔⛔Car sold⛔⛔".format(car.get_text_message()), parse_mode="HTML")
+
+    def send_price_change(self, car: Car, old_price):
+        if self.mock:
+            print("Sending price change: {}".format(car.get_text_message()))
+        else:
+            self.bot.send_photo(self.chat_id, car.avatar)
+            self.bot.send_message(self.chat_id, f"💰💰Price change💰💰\n<b>Old price: {old_price}</b>\n\n{car.get_text_message()}", parse_mode="HTML")

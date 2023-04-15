@@ -56,7 +56,7 @@ def get_car_from_dict(car_dict):
 
 def get_features_text(features):
     selected_features = []
-    interesting_features = ['Driving Assistant Professional', 'M Technik Paket', 'Glasdach, elektrisch mit Schiebe- und Hebefunktion', "Sitzverstellung, elektrisch mit Memory für Fahrersitz"]
+    interesting_features = ['Driving Assistant Professional', 'M Technik Paket', 'Glasdach, elektrisch mit Schiebe- und Hebefunktion', "Sitzverstellung, elektrisch mit Memory für Fahrersitz", "Harman Kardon Surround Sound System", "Parking Assistant Plus", "Adaptives M Fahrwerk"]
     diff_threshold = 0.8
 
     for feature in features:
@@ -81,6 +81,9 @@ def get_features_text(features):
             continue
         if feature == "Sitzverstellung, elektrisch mit Memory für Fahrersitz":
             text += f"✅Electric seats\n"
+            continue
+        if feature == "Adaptives M Fahrwerk":
+            text += f"✅Adaptive suspension\n"
             continue
         text += f"{feature}\n"
 
