@@ -41,6 +41,9 @@ class Car:
 
 
 def get_car_from_dict(car_dict):
+    if car_dict["features"] is None:
+        car_dict["features"] = []
+
     return Car(
         car_dict["brand"],
         car_dict["model"],
