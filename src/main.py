@@ -52,7 +52,8 @@ def main():
     sold_cars = 0
     # check if any car was sold
     for car in collection.find():
-        if not any(c.product_code == car["product_code"] for c in cars) and car["sold"] is None:
+        # check if "sold" key exists
+        if "sold" not in car and not any(c.product_code == car["product_code"] for c in cars):
             # send message
             tgmBot.send_car_sold(get_car_from_dict(car))
 
